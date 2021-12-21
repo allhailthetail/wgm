@@ -37,15 +37,10 @@ def manpage():
         /etc/wireguard/<hostname.conf>
             each file represents 'host-side, root' interface configuration.
 
-        /etc/wireguard/hosts/<hostname>
-            contains public/private keypairs and original generated config file for backup.  
+        /etc/wireguard/hosts/<hostname.{conf, conf.bak, public, private}>
+            contains public/private HOST keypairs and original generated config file for backup.  
 
-        /etc/wireguard/clients/<hostname.d>
-            each hostname.d folder contains groupings of clients by their connection to 
-            a given host interface
-
-        /etc/wireguard/clients/<hostname.d>/<clientname>
-            contains clientname.conf and public/private keypairs
-    
+        /etc/wireguard/clients/<clientname.{conf, conf.bak, public, private}>
+            contains public/private CLIENT keypairs and original generated config file for backup.
     ''')
 
