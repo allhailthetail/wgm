@@ -23,7 +23,7 @@ def manpage():
         Administrative privileges are required in order to use this program.  
     
     Options
-        -N, --newhost <hostname> <ip addr/CIDR>
+        -N, --newhost <hostname> <ip addr/CIDR> <listenport>
             * Create a new host interface, hostname.conf in /etc/wireguard/
         
         -n, --new-client <hostname> <clientname>
@@ -36,6 +36,9 @@ def manpage():
     FILES
         /etc/wireguard/<hostname.conf>
             each file represents 'host-side, root' interface configuration.
+
+        /etc/wireguard/hosts/<hostname>
+            contains public/private keypairs and original generated config file for backup.  
 
         /etc/wireguard/clients/<hostname.d>
             each hostname.d folder contains groupings of clients by their connection to 

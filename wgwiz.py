@@ -1,5 +1,4 @@
-import os, sys
-
+import os, sys, subprocess
 import help
 
 def is_root():
@@ -14,21 +13,21 @@ def get_args():
 # def newhost():
 
 def main():
-    # Get arguments in order to run:
-    # args needs an interactive mode that will guide you step-by-step, for ease of use.
-    # then, also needs the option to script-ify the process and make a one-liner out of it.  
+    # Get arguments:
     args = get_args()
 
+    # Check if root before continuing:
     if is_root():
         print(len(get_args()))
-        
+    
+    # If not root,
     elif not is_root():
-        # queue manual page without root privileges:
+        # -h or --help opens man page without privileges:
         if len(args) == 1 and (args[0] == '-h' or args[0] == '--help'):
             help.manpage()
         elif len(args) == 1 and (args[0] != '-h' or args[0] != '--help'):
-            help.manpage()
-    
+            help.warn_no_root()
+    # Panic Condition:
     else: 
         help.panic_exit()
 
