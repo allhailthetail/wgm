@@ -1,4 +1,4 @@
-import os, sys, subprocess, argparse
+import os, sys, argparse
 import newhost, newclient
 
 def is_root():
