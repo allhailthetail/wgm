@@ -45,8 +45,3 @@ def newclient(hostname, clientname, allowed_ip, host_endpoint, host_endpoint_por
     with open(f'/etc/wireguard/{hostname}.d/{clientname}.{hostname}.private', 'w') as f:       # create .private containing private key
         f.write(f"{KeyPair['privkey']}\n")
         f.close()
-
-
-
-# for debugging:
-newclient('wg0', None)

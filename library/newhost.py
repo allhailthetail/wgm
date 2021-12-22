@@ -1,10 +1,5 @@
-from shutil import copyfile
-import library.wgkey
-# from wgkey import genkeys
-
-# global static: ../hosts location:
-hosts_dir = '/etc/wireguard/hosts/'
-main_cfg_dir = '/etc/wireguard/'
+import wgkey
+import os
 
 def newhost(hostname, ip_cidr, listenport):
     '''
@@ -25,15 +20,16 @@ def newhost(hostname, ip_cidr, listenport):
     PostUp = '#/etc/wireguard/PostUp.sh'
     PostDown = '#/etc/wireguard/PostDown.sh'
     
-    # call lib.wgkey.genkey to fetch values for function
-    #   and save those values for future use:
-    KeyPair = library.wgkey.genkeys(hostname, hosts_dir)
+    # call lib.wgkey.genkey to fetch public/private pair
+    KeyPair = wgkey.genkeys()
 
-    with open(f'/etc/wireguard/{hostname}.conf', 'w') as f:     # write /etc/wireguard/.conf
+    # create directory hostname.d
+    # write new file, hostname.host.conf
+    # write new file, hostname.private
+    os.mkdir(f'/etc/wireguard/{hostname}.d')
+    with open(f'/etc/wireguard/{hostname}.d/{hostname}.host.conf', 'w') as f:     # hostfile in drop directory
                 f.writelines([
-                    '## CREATED AUTOMATICALLY WITH WGWIZ\n',
-                    '## DO NOT EDIT DIRECTLY!!\n\n',
-                    f'# Name: {hostname}\n',
+                    f'#{hostname}.host.conf\n',
                     '[Interface]\n',
                     f"PrivateKey = {KeyPair['privkey']}\n",
                     f'Address = {ip_cidr}\n',
@@ -42,6 +38,6 @@ def newhost(hostname, ip_cidr, listenport):
                     f'PostDown = {PostDown}\n'
                 ])
                 f.close()
-
-    # backup newly-created file to /etc/wireguard/hosts/.conf.bak
-    copyfile(f'/etc/wireguard/{hostname}.conf', f'/etc/wireguard/hosts/{hostname}.conf.bak')
+    with open(f'/etc/wireguard/{hostname}.d/{hostname}.private', 'w') as f:       # create .private containing private key
+        f.write(f"{KeyPair['privkey']}\n")
+        f.close()
