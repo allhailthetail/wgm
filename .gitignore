@@ -130,3 +130,6 @@ dmypy.json
 
 # local working backups
 *.bak
+
+# local examples
+examples.ignore
