@@ -1,4 +1,4 @@
-import wgkey
+import library.wgkey
 import os
 
 def newhost(hostname, ip_cidr, listenport):
@@ -21,7 +21,7 @@ def newhost(hostname, ip_cidr, listenport):
     PostDown = '#/etc/wireguard/PostDown.sh'
     
     # call lib.wgkey.genkey to fetch public/private pair
-    KeyPair = wgkey.genkeys()
+    KeyPair = library.wgkey.genkeys()
 
     # create directory hostname.d
     # write new file, hostname.host.conf
