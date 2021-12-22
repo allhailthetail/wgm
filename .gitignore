@@ -133,3 +133,6 @@ dmypy.json
 
 # local examples
 examples.ignore
+
+# todo list
+todo.ignore
