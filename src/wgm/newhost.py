@@ -1,4 +1,4 @@
-import wgm.wgkey
+import wgkey
 import os
 
 def newhost(hostname, ip_cidr, listenport):
@@ -17,27 +17,26 @@ def newhost(hostname, ip_cidr, listenport):
         listenport = 51820
         
     # PLACEHOLDER VALUES, REPLACE LATER!!
+    # can a single firewall.d zone handle the whole thing?  simple on and off?
     PostUp = '#/etc/wireguard/PostUp.sh'
     PostDown = '#/etc/wireguard/PostDown.sh'
     
-    # call lib.wgkey.genkey to fetch public/private pair
-    KeyPair = wgm.wgkey.genkeys()
+    # call lib.wgkey.genkey to fetch a unique pair
+    KeyPair = wgkey.genkeys()
 
-    # create directory hostname.d
-    # write new file, hostname.host.conf
-    # write new file, hostname.private
+    # create hostname.* files
     os.mkdir(f'/etc/wireguard/{hostname}.d')
     with open(f'/etc/wireguard/{hostname}.d/{hostname}.host.conf', 'w') as f:     # hostfile in drop directory
                 f.writelines([
                     f'#{hostname}.host.conf\n',
                     '[Interface]\n',
-                    f"PrivateKey = {KeyPair['privkey']}\n",
-                    f'Address = {ip_cidr}\n',
-                    f'ListenPort = {listenport}\n',
-                    f'PostUp = {PostUp}\n',
-                    f'PostDown = {PostDown}\n'
+                    f"PrivateKey = {KeyPair['privkey']}\n",                       # private key of host interface
+                    f'Address = {ip_cidr}\n',                                     # public-facing WAN address
+                    f'ListenPort = {listenport}\n',                               # port wireguard listens for connections
+                    f'PostUp = {PostUp}\n',                                       # firewall script to run on initialization
+                    f'PostDown = {PostDown}\n'                                    # firewall script to run on shutdown
                 ])
                 f.close()
     with open(f'/etc/wireguard/{hostname}.d/{hostname}.private', 'w') as f:       # create .private containing private key
-        f.write(f"{KeyPair['privkey']}\n")
+        f.write(f"{KeyPair['privkey']}\n")                                        # host private key
         f.close()

@@ -1,12 +1,13 @@
-import wgm.wgkey
+import wgkey
 import os, sys
 
 def newclient(hostname, clientname, client_ip, host_endpoint, allowed_ip, dns, host_endpoint_port):
     
     '''
-    Responsible for verifying valid input at runtime, filling for optional/implied values,
-    verifying valid configuration,
-    creating a new "client" interface and accompanying files.
+    Responsible creating a new "client" interface, 
+    writing the host-side interface to /etc/wireguard/host.d/client.host.conf,
+    writing the client-side interface to /etc/wireguard/host.d/client.conf,
+    and saving the client private key to /etc/wireguard/host.d/client.host.private.
     '''
 
     # replace default values if passed a None type:
@@ -19,8 +20,8 @@ def newclient(hostname, clientname, client_ip, host_endpoint, allowed_ip, dns, h
     if allowed_ip == None:
         sys.exit('must specify allowed ip(s} for client!!')
     
-    # call lib.wgkey.genkey to fetch public/private pair
-    KeyPair = wgm.wgkey.genkeys()
+    # call wgkey.genkey to fetch a unique keypair
+    KeyPair = wgkey.genkeys()
 
     # verify valid hostname exists
     os.path.isdir(f'/etc/wireguard/{hostname}.d/')
@@ -39,15 +40,16 @@ def newclient(hostname, clientname, client_ip, host_endpoint, allowed_ip, dns, h
     with open(f'/etc/wireguard/{hostname}.d/{clientname}.conf', 'w') as f:                  # hostfile in drop directory
         f.writelines([
             f'[Interface]\n',
-            f"PrivateKey = {KeyPair['privkey']}\n",
-            f'Address = {client_ip}\n',                        
-            f'DNS = {dns}\n',
+            f"PrivateKey = {KeyPair['privkey']}\n",                                         # client private key
+            f'Address = {client_ip}\n',                                                     # tunnel IP client will receive
+            f'DNS = {dns}\n',                                                               # DNS servers client will use
             f'\n\n[Peer]\n',
-            f'PublicKey = {wgm.wgkey.get_host_public(hostname)}\n',                                     
-            f'Endpoint = {host_endpoint}:{host_endpoint_port} \n',  
-            f'AllowedIPs = {allowed_ip}\n'
+            f'PublicKey = {wgkey.get_host_public(hostname)}\n',                             # host interface public key        
+            f'Endpoint = {host_endpoint}:{host_endpoint_port} \n',                          # host WAN address : listening port
+            f'AllowedIPs = {allowed_ip}\n'                                                  # scope of accessible addresses for tunnel
+                                                                                                # 0.0.0.0/0 makes tunnel default gateway
         ])
         f.close()
-    with open(f'/etc/wireguard/{hostname}.d/{clientname}.{hostname}.private', 'w') as f:    # create .private containing private key
+    with open(f'/etc/wireguard/{hostname}.d/{clientname}.{hostname}.private', 'w') as f:    # client private key
         f.write(f"{KeyPair['privkey']}\n")
         f.close()
