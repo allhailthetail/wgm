@@ -1,0 +1,19 @@
+Examples:
+
+Example #1:
+    1. Create new 'host' WireGuard interface, named wg-test
+    2. Assign wg0 interface an ip of 10.0.0.1/30 
+    3. Listen for connection attempts on port 8291
+
+    run:
+
+    sudo python wgwiz.py --newhost wg-test -i 10.0.0.1/30 -p 8291
+
+    4. Create new 'client' to connect to host, named client-test
+    5. Assign client-test an ip of 10.0.0.2/30 
+    6. specify IPs server will allow client access to <--allowed>
+    6. connect to 'public-facing' host interface 192.0.0.1 on port 8291
+
+    run:
+
+sudo python wgwiz.py --newclient client-test -b wg-test -e 192.0.0.1 -p 8291 -i 10.0.0.2/30 --allowed 10.0.0.2/30

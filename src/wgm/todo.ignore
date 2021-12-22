@@ -1,0 +1,20 @@
+1. fix allowed_ips issue in client entry.  It's localized to the main program,
+    just need to decide how to clean it up
+
+2. figure out how the .confs inside the drop directory will be merged to create a
+    host-side interface, eg. "actual" wg0.confs
+    
+    2a. will there be a cron job to sync changes, or...?  
+        - if cron runs every few minutes, do a diff between them every few minutes, 
+            if diff then make new .conf and restart interface?  
+        - check out cronie!
+    2b. how will deletion be handled?  IP utilization??  
+        - needs a tool to show used and unused ips?
+        - maybe that's not possible?  IDK...  
+
+    3. research fedora firewall-cmd, would that be better to use than iptables? 
+
+    4. add some default configuration firewall scripts and figure out a way to get those
+        integrated into your program.  
+    
+    
