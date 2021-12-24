@@ -30,7 +30,7 @@ def get_host_private(hostname):
         if 'PrivateKey' in line:
             priv = line.replace('PrivateKey = ', '')
             break
-    return priv
+    return priv.replace('\n','')
 
 def get_host_public(hostname):
     """
@@ -44,4 +44,4 @@ def get_host_public(hostname):
         if 'PublicKey' in line:
             pub = line.replace('#PublicKey = ', '')
             break
-    return pub
+    return pub.replace('\n','')
