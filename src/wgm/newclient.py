@@ -34,21 +34,25 @@ def newclient(hostname, clientname, client_ip, host_endpoint, allowed_ip, dns, h
             f'[Peer]\n',
             f"PublicKey = {KeyPair['pubkey']}\n",                                           # PUBLIC KEY OF CLIENT
             f'AllowedIPs = {client_ip}\n',
-            f'PersistentKeepalive = 25\n'
+            f'PersistentKeepalive = 300\n'
         ])
         f.close()
 
+    # make clients directory if it does not exist
+    if not os.path.exists('/etc/wireguard/clients'):
+        os.mkdir(f'/etc/wireguard/clients')
+
     # create client files for the client file to use to connect:
-    with open(f'/etc/wireguard/{clientname}.d/{hostname}.conf', 'w') as f:                  # hostfile in drop directory
+    with open(f'/etc/wireguard/clients/{clientname}.{hostname}.conf', 'w') as f:                  # hostfile in drop directory
         f.writelines([
-            f'{clientname}.conf',
+            f'#{clientname}.{hostname}conf\n',
             f'[Interface]\n',
             f"PrivateKey = {KeyPair['privkey']}\n",                                         # client private key
             f'Address = {client_ip}\n',                                                     # tunnel IP client will receive
             f'DNS = {dns}\n',                                                               # DNS servers client will use
             f'\n\n[Peer]\n',
             f'PublicKey = {wgkey.get_host_public(hostname)}\n',                             # host interface public key        
-            f'Endpoint = {host_endpoint}:{host_endpoint_port} \n',                          # host WAN address : listening port
+            f'Endpoint = {host_endpoint}:{host_endpoint_port}\n',                          # host WAN address : listening port
             f'AllowedIPs = {allowed_ip}\n'                                                  # scope of accessible addresses for tunnel
                                                                                                 # 0.0.0.0/0 makes tunnel default gateway
         ])
