@@ -27,18 +27,21 @@ def newclient(hostname, clientname, client_ip, host_endpoint, allowed_ip, dns, h
     os.path.isdir(f'/etc/wireguard/{hostname}.d/')
     os.path.isfile(f'/etc/wireguard/{hostname}.d/{hostname}.host.conf')
     
-    # create client.* files:
-    with open(f'/etc/wireguard/{hostname}.d/{clientname}.{hostname}.conf', 'w') as f:       # hostfile in drop directory
+    # create client files for the host interface to use:
+    with open(f'/etc/wireguard/{hostname}.d/{hostname}.{clientname}.conf', 'w') as f:       # hostfile in drop directory
         f.writelines([
-            f'#{clientname}.{hostname}.conf\n',
+            f'#{hostname}.{clientname}.conf\n',
             f'[Peer]\n',
             f"PublicKey = {KeyPair['pubkey']}\n",                                           # PUBLIC KEY OF CLIENT
-            f'AllowedIPs = {allowed_ip}\n',
-            f'PersistentKeepalive = 25'
+            f'AllowedIPs = {client_ip}\n',
+            f'PersistentKeepalive = 25\n'
         ])
         f.close()
-    with open(f'/etc/wireguard/{hostname}.d/{clientname}.conf', 'w') as f:                  # hostfile in drop directory
+
+    # create client files for the client file to use to connect:
+    with open(f'/etc/wireguard/{clientname}.d/{hostname}.conf', 'w') as f:                  # hostfile in drop directory
         f.writelines([
+            f'{clientname}.conf',
             f'[Interface]\n',
             f"PrivateKey = {KeyPair['privkey']}\n",                                         # client private key
             f'Address = {client_ip}\n',                                                     # tunnel IP client will receive
@@ -49,7 +52,4 @@ def newclient(hostname, clientname, client_ip, host_endpoint, allowed_ip, dns, h
             f'AllowedIPs = {allowed_ip}\n'                                                  # scope of accessible addresses for tunnel
                                                                                                 # 0.0.0.0/0 makes tunnel default gateway
         ])
-        f.close()
-    with open(f'/etc/wireguard/{hostname}.d/{clientname}.{hostname}.private', 'w') as f:    # client private key
-        f.write(f"{KeyPair['privkey']}\n")
         f.close()
