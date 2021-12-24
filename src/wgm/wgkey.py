@@ -18,10 +18,30 @@ def genkeys():
     # return keypair back to program for further processing:
     return(KeyPair)
 
+def get_host_private(hostname):
+    """
+    Parses hostname.host.conf and returns its private key.  
+    This elliminates the need to have a separate file just to hold a .private file. 
+    """
+    with open(f'/etc/wireguard/{hostname}.d/{hostname}.host.conf', 'rt') as f:
+        lines = f.readlines()
+
+    for line in lines:
+        if 'PrivateKey' in line:
+            priv = line.replace('PrivateKey = ', '')
+            break
+    return priv
+
 def get_host_public(hostname):
     """
-    processes the host.private file and returns the corresponding public key 
+    Parses hostname.host.conf and returns its private key.  
+    This elliminates the need to have a separate file just to hold a .private file. 
     """
-    os.path.isdir('/etc/wireguard/{hostname}.d/')
-    os.path.isfile('/etc/wireguard/{hostname.d/{hostname}.private')
-    return subprocess.check_output(f'wg pubkey < /etc/wireguard/{hostname}.d/{hostname}.private', shell=True).decode('utf-8').strip()
+    with open(f'/etc/wireguard/{hostname}.d/{hostname}.host.conf', 'rt') as f:
+        lines = f.readlines()
+
+    for line in lines:
+        if 'PublicKey' in line:
+            pub = line.replace('#PublicKey = ', '')
+            break
+    return pub
