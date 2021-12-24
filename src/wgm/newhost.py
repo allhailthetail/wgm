@@ -29,6 +29,7 @@ def newhost(hostname, ip_cidr, listenport):
     with open(f'/etc/wireguard/{hostname}.d/{hostname}.host.conf', 'w') as f:     # hostfile in drop directory
                 f.writelines([
                     f'#{hostname}.host.conf\n',
+                    f"#PublicKey = {KeyPair['pubkey']}\n\n"
                     '[Interface]\n',
                     f"PrivateKey = {KeyPair['privkey']}\n",                       # private key of host interface
                     f'Address = {ip_cidr}\n',                                     # public-facing WAN address
@@ -37,6 +38,3 @@ def newhost(hostname, ip_cidr, listenport):
                     f'PostDown = {PostDown}\n'                                    # firewall script to run on shutdown
                 ])
                 f.close()
-    with open(f'/etc/wireguard/{hostname}.d/{hostname}.private', 'w') as f:       # create .private containing private key
-        f.write(f"{KeyPair['privkey']}\n")                                        # host private key
-        f.close()
